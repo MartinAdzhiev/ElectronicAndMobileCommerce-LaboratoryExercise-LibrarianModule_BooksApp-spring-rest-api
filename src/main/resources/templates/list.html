@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BOOK APP</title>
+</head>
+<body>
+
+<div>
+    <div>
+        <a href="books/add" class="add-item">
+            Add
+        </a>
+    </div>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Author</th>
+            <th>Available Copies</th>
+        </tr>
+        <tr th:each="book : ${books}" class="item">
+            <td th:text="${book.getName()}"></td>
+            <td th:text="${book.getCategory()}"></td>
+            <td th:text="${book.getAuthor().getName()} + ' ' + ${book.getAuthor().getSurname()}"></td>
+            <td th:text="${book.getAvailableCopies()}"></td>
+
+            <td>
+
+                <form method="post" th:action="@{'/books/{id}/delete' (id = ${book.getId()})}">
+                    <button sec:authorize="hasRole('ADMIN')" type="submit" class="delete-item">Delete</button>
+                </form>
+
+                <form method="post" th:action="@{'/books/{id}/markAsTaken' (id = ${book.getId()})}">
+                    <button sec:authorize="hasRole('ADMIN')" th:disabled="${book.getAvailableCopies() == 0}">Mark As Taken</button>
+                </form>
+
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{'books/{id}/edit' (id = ${book.getId()})}" class="edit-item">Edit</a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<div>
+    <ul id="nav">
+        <li><a href="/static">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+</body>
+</html>
